@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install production deps
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Prisma (tetap penting)
 COPY prisma ./prisma
