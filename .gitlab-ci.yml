@@ -96,7 +96,7 @@ migrate-job:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   variables:
-    DATABASE_URL: postgresql://$DB_USER:$DB_PASS@10.212.1.212:5432/tif-commercial-dashboard
+    DATABASE_URL: postgresql://commerce:TIFju4lan@10.212.1.212:5432/tif-commercial-dashboard
     NPM_CONFIG_CACHE: /tmp/.npm   # 🔥 FIX DI SINI
 
   script:
