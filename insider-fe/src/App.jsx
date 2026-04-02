@@ -8,7 +8,7 @@ import { useAuthStore } from "./stores/authStore";
 const CoverageIsp = lazy(() => import("./PowerBI/CoverageISP"));
 const OdpNasional = lazy(() => import("./PowerBI/OdpNasional"));
 const IspProfiling = lazy(() => import("./PowerBI/IspProfiling"));
-const ListIsp = lazy(() => import("./listIsp"));
+const ListIsp = lazy(() => import("./ListIsp"));
 const ManageUsers = lazy(() => import("./ManageUsers"));
 const ManageWhitelists = lazy(() => import("./ManageWhitelists"));
 const UsersLogs = lazy(() => import("./UsersLogs"));
