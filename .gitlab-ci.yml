@@ -1,7 +1,6 @@
 stages:
   - build
   - docker
-  - migrate
   - deploy
 
 # ==========================================
@@ -22,23 +21,19 @@ build-app:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   script:
-    # ===== FRONTEND BUILD =====
     - echo "Build React..."
     - cd insider-fe
     - npm ci
     - npm run build
 
-    # ===== COPY TO NEST =====
     - echo "Copy build React ke Nest..."
     - mkdir -p ../insider-nest/public
     - cp -r dist/* ../insider-nest/public
 
-    # ===== BACKEND BUILD =====
     - cd ../insider-nest
     - npm ci
     - npm run build
 
-    # ===== SAVE ARTIFACT =====
     - cd ..
     - tar -czf app.tar.gz insider-nest
 
@@ -68,16 +63,11 @@ docker-build:
     - echo "VERSION_TAG=$VERSION_TAG" >> build.env
     - echo "CONTAINER_RELEASE_IMAGE=$CONTAINER_RELEASE_IMAGE" >> build.env
 
-    # Login Harbor
     - echo "$HARBOR_PASS" | docker login $HARBOR_URL -u "$HARBOR_USER" --password-stdin
 
-    # Build image
     - docker build -t $CONTAINER_RELEASE_IMAGE ./insider-nest
-
-    # Push
     - docker push $CONTAINER_RELEASE_IMAGE
 
-    # Latest tag
     - docker tag $CONTAINER_RELEASE_IMAGE $CONTAINER_RELEASE_LATEST
     - docker push $CONTAINER_RELEASE_LATEST
 
@@ -86,41 +76,27 @@ docker-build:
       dotenv: build.env
 
 # ==========================================
-# DATABASE MIGRATION
-# ==========================================
-migrate-job:
-  stage: migrate
-  image: $CONTAINER_RELEASE_IMAGE
-  needs:
-    - docker-build
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-  variables:
-    DATABASE_URL: postgresql://commerce:TIFju4lan@10.212.1.212:5432/insider-nest?schema=public&sslmode=prefer
-    NPM_CONFIG_CACHE: /tmp/.npm   # 🔥 FIX DI SINI
-
-  script:
-    - pwd
-    - ls -la
-    - cd insider-nest
-    - echo "Running migration..."
-    - npx prisma@6 migrate deploy
-
-# ==========================================
-# DEPLOY TO OKD
+# DEPLOY + MIGRATE (dari dalam pod OKD)
 # ==========================================
 deploy-job:
   stage: deploy
   image: openshift/origin-cli:latest
   needs:
     - docker-build
-    - migrate-job
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   before_script:
     - oc login --server=$OPENSHIFT_SERVER_PRD -u $OPENSHIFT_USER_PRD -p $OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
     - oc project $OPENSHIFT_PROJECT_PRD
   script:
-    - echo "Deploying image $CONTAINER_RELEASE_IMAGE"
+    # 1. Update image & tunggu rollout selesai
+    - echo "Deploying image $CONTAINER_RELEASE_IMAGE..."
     - oc set image dc/$OPENSHIFT_NAME_PRD container=$CONTAINER_RELEASE_IMAGE --record
     - oc rollout status dc/$OPENSHIFT_NAME_PRD --watch=true --timeout=5m
+
+    # 2. Ambil nama pod yang running
+    - POD=$(oc get pod -l deploymentconfig=$OPENSHIFT_NAME_PRD --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+    - echo "Running migration di pod $POD..."
+
+    # 3. Jalankan migrasi dari dalam pod (sudah bisa akses DB)
+    - oc exec $POD -- npx prisma migrate deploy
