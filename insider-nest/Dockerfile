@@ -6,16 +6,16 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install production deps
-COPY insider-nest/package*.json ./
+COPY package*.json ./
 RUN npm ci --omit=dev
 
 # Prisma (tetap penting)
-COPY insider-nest/prisma ./prisma
+COPY prisma ./prisma
 RUN npx prisma generate
 
 # Copy hasil build dari CI
-COPY insider-nest/dist ./dist
-COPY insider-nest/public ./public
+COPY dist ./dist
+COPY public ./public
 
 # Permission for OKD (lu udah bener)
 RUN chgrp -R 0 /app && chmod -R g+rwX /app
