@@ -100,8 +100,9 @@ migrate-job:
     NPM_CONFIG_CACHE: /tmp/.npm   # 🔥 FIX DI SINI
 
   script:
+    - pwd
     - ls -la
-    - ls -la prisma
+    - cd insider-nest
     - echo "Running migration..."
     - npx prisma migrate deploy
 
