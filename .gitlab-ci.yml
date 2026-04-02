@@ -96,7 +96,7 @@ migrate-job:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   variables:
-    DATABASE_URL: postgresql://commerce:TIFju4lan@10.212.1.212:5432/insider-nest?sslmode=prefer
+    DATABASE_URL: postgresql://commerce:TIFju4lan@10.212.1.212:5432/insider-nest?schema=public&sslmode=prefer
     NPM_CONFIG_CACHE: /tmp/.npm   # 🔥 FIX DI SINI
 
   script:
