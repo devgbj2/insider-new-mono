@@ -104,7 +104,7 @@ migrate-job:
     - ls -la
     - cd insider-nest
     - echo "Running migration..."
-    - npx prisma migrate deploy
+    - npx prisma@6 migrate deploy
 
 # ==========================================
 # DEPLOY TO OKD
