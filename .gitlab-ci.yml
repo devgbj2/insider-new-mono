@@ -100,6 +100,8 @@ migrate-job:
     NPM_CONFIG_CACHE: /tmp/.npm   # 🔥 FIX DI SINI
 
   script:
+    - ls -la
+    - ls -la prisma
     - echo "Running migration..."
     - npx prisma migrate deploy
 
