@@ -1,0 +1,126 @@
+[
+  {
+    "name": "ICONNET",
+    "color": "emerald-200",
+    "locations": [
+      { "city": "Balikpapan", "lat": -1.26916, "lng": 116.82526, "district": "Kalimantan", "province": "Kalimantan Timur", "territory": 6, "cityPriority": 1 },
+      { "city": "Pekanbaru", "lat": 0.533505, "lng": 101.447403, "district": "Sumatera Tengah", "province": "Riau", "territory": 2, "cityPriority": 1 },
+      { "city": "Riau", "lat": 0.2933, "lng": 101.7068, "district": "Sumatera Tengah", "province": "Riau", "territory": 2, "cityPriority": 2 },
+      { "city": "Kendari", "lat": -3.9765, "lng": 122.5155, "district": "Sulawesi", "province": "Sulawesi Tenggara", "territory": 7, "cityPriority": 2 }
+    ]
+  },
+  {
+    "name": "First Media",
+    "color": "orange-200",
+    "locations": [
+      { "city": "Surabaya", "lat": -7.2575, "lng": 112.7521, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 1 },
+      { "city": "Semarang", "lat": -7.0051, "lng": 110.4381, "district": "Jawa Tengah", "province": "Jawa Tengah", "territory": 3, "cityPriority": 1 },
+      { "city": "Yogyakarta", "lat": -7.7971, "lng": 110.3705, "district": "Jawa Tengah", "province": "DI Yogyakarta", "territory": 3, "cityPriority": 2 },
+      { "city": "Lampung", "lat": -5.3971, "lng": 105.2668, "district": "Sumatera Selatan", "province": "Lampung", "territory": 1, "cityPriority": 2 }
+    ]
+  },
+  {
+    "name": "Biznet Home",
+    "color": "violet-300",
+    "locations": [
+      { "city": "Aceh", "lat": 5.5483, "lng": 95.3238, "district": "Sumatera Utara", "province": "Aceh", "territory": 1, "cityPriority": 1 },
+      { "city": "Riau", "lat": 0.2933, "lng": 101.7068, "district": "Sumatera Tengah", "province": "Riau", "territory": 2, "cityPriority": 2 },
+      { "city": "Padang", "lat": -0.9471, "lng": 100.4172, "district": "Sumatera Tengah", "province": "Sumatera Barat", "territory": 2, "cityPriority": 2 },
+      { "city": "Medan", "lat": 3.5952, "lng": 98.6722, "district": "Sumatera Utara", "province": "Sumatera Utara", "territory": 1, "cityPriority": 1 },
+      { "city": "Lampung", "lat": -5.3971, "lng": 105.2668, "district": "Sumatera Selatan", "province": "Lampung", "territory": 1, "cityPriority": 2 },
+      { "city": "Bengkulu", "lat": -3.8004, "lng": 102.2655, "district": "Sumatera Selatan", "province": "Bengkulu", "territory": 1, "cityPriority": 2 },
+      { "city": "Jambi", "lat": -1.6101, "lng": 103.6131, "district": "Sumatera Selatan", "province": "Jambi", "territory": 1, "cityPriority": 2 },
+      { "city": "Palembang", "lat": -2.9909, "lng": 104.7566, "district": "Sumatera Selatan", "province": "Sumatera Selatan", "territory": 1, "cityPriority": 2 },
+      { "city": "Binjai", "lat": 3.5986, "lng": 98.4853, "district": "Sumatera Utara", "province": "Sumatera Utara", "territory": 1, "cityPriority": 2 }
+    ]
+  },
+  {
+    "name": "CBN Fiber",
+    "color": "fuchsia-300",
+    "locations": [
+      { "city": "Jakarta", "lat": -6.2088, "lng": 106.8456, "district": "Jabodetabek", "province": "DKI Jakarta", "territory": 4, "cityPriority": 1 },
+      { "city": "Bogor", "lat": -6.595, "lng": 106.8166, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Depok", "lat": -6.4025, "lng": 106.7942, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Tangerang", "lat": -6.1702, "lng": 106.6406, "district": "Jabodetabek", "province": "Banten", "territory": 4, "cityPriority": 1 },
+      { "city": "Bekasi", "lat": -6.2383, "lng": 106.9756, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Lampung", "lat": -5.3971, "lng": 105.2668, "district": "Sumatera Selatan", "province": "Lampung", "territory": 1, "cityPriority": 2 },
+      { "city": "Yogyakarta", "lat": -7.7971, "lng": 110.3705, "district": "Jawa Tengah", "province": "DI Yogyakarta", "territory": 3, "cityPriority": 2 },
+      { "city": "Semarang", "lat": -7.0051, "lng": 110.4381, "district": "Jawa Tengah", "province": "Jawa Tengah", "territory": 3, "cityPriority": 1 },
+      { "city": "Surakarta", "lat": -7.5690, "lng": 110.8250, "district": "Jawa Tengah", "province": "Jawa Tengah", "territory": 3, "cityPriority": 2 }
+    ]
+  },
+  {
+    "name": "Indosat Hifi",
+    "color": "blue-300",
+    "locations": [
+      { "city": "Aceh", "lat": 5.5483, "lng": 95.3238, "district": "Sumatera Utara", "province": "Aceh", "territory": 1, "cityPriority": 1 },
+      { "city": "Medan", "lat": 3.5952, "lng": 98.6722, "district": "Sumatera Utara", "province": "Sumatera Utara", "territory": 1, "cityPriority": 1 },
+      { "city": "Jambi", "lat": -1.6101, "lng": 103.6131, "district": "Sumatera Selatan", "province": "Jambi", "territory": 1, "cityPriority": 2 },
+      { "city": "Lampung", "lat": -5.3971, "lng": 105.2668, "district": "Sumatera Selatan", "province": "Lampung", "territory": 1, "cityPriority": 2 },
+      { "city": "Jakarta", "lat": -6.2088, "lng": 106.8456, "district": "Jabodetabek", "province": "DKI Jakarta", "territory": 4, "cityPriority": 1 },
+      { "city": "Bogor", "lat": -6.595, "lng": 106.8166, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Depok", "lat": -6.4025, "lng": 106.7942, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Tangerang", "lat": -6.1702, "lng": 106.6406, "district": "Jabodetabek", "province": "Banten", "territory": 4, "cityPriority": 1 },
+      { "city": "Bekasi", "lat": -6.2383, "lng": 106.9756, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Bandung", "lat": -6.9175, "lng": 107.6191, "district": "Jawa Barat", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Kabupaten Bandung", "lat": -6.8213, "lng": 107.1424, "district": "Jawa Barat", "province": "Jawa Barat", "territory": 4, "cityPriority": 2 },
+      { "city": "Karawang", "lat": -6.3054, "lng": 107.3001, "district": "Jawa Barat", "province": "Jawa Barat", "territory": 4, "cityPriority": 2 }
+    ]
+  },
+  {
+    "name": "MNC Play",
+    "color": "red-300",
+    "locations": [
+      { "city": "Jakarta", "lat": -6.2088, "lng": 106.8456, "district": "Jabodetabek", "province": "DKI Jakarta", "territory": 4, "cityPriority": 1 },
+      { "city": "Bogor", "lat": -6.595, "lng": 106.8166, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Depok", "lat": -6.4025, "lng": 106.7942, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Tangerang", "lat": -6.1702, "lng": 106.6406, "district": "Jabodetabek", "province": "Banten", "territory": 4, "cityPriority": 1 },
+      { "city": "Bekasi", "lat": -6.2383, "lng": 106.9756, "district": "Jabodetabek", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Bandung", "lat": -6.9175, "lng": 107.6191, "district": "Jawa Barat", "province": "Jawa Barat", "territory": 4, "cityPriority": 1 },
+      { "city": "Cianjur", "lat": -7.1125, "lng": 107.6275, "district": "Jawa Barat", "province": "Jawa Barat", "territory": 4, "cityPriority": 2 },
+      { "city": "Surabaya", "lat": -7.2575, "lng": 112.7521, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 1 },
+      { "city": "Malang", "lat": -7.9797, "lng": 112.6304, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 1 }
+    ]
+  },
+  {
+    "name": "My Republic",
+    "color": "zinc-300",
+    "locations": [
+      { "city": "Surabaya", "lat": -7.2575, "lng": 112.7521, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 1 },
+      { "city": "Malang", "lat": -7.9797, "lng": 112.6304, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 1 },
+      { "city": "Sidoarjo", "lat": -7.4728, "lng": 112.4339, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 2 },
+      { "city": "Batu", "lat": -7.8481, "lng": 112.0173, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 2 },
+      { "city": "Kediri", "lat": -7.6316, "lng": 111.523, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 2 },
+      { "city": "Blitar", "lat": -8.0956, "lng": 112.1687, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 2 },
+      { "city": "Batam", "lat": 1.0456, "lng": 104.0305, "district": "Kepulauan Riau", "province": "Kepulauan Riau", "territory": 5, "cityPriority": 1 },
+      { "city": "Aceh", "lat": 5.5483, "lng": 95.3238, "district": "Sumatera Utara", "province": "Aceh", "territory": 1, "cityPriority": 1 }
+    ]
+  },
+  {
+    "name": "Oxygen.id",
+    "color": "indigo-300",
+    "percentage": "",
+    "locations": [
+      { "city": "Jakarta", "lat": -6.2088, "lng": 106.8456, "district": "Jabodetabek", "province": "DKI Jakarta", "territory": 4, "cityPriority": 1 },
+      { "city": "Bali", "lat": -8.4095, "lng": 115.1889, "district": "Bali", "province": "Bali", "territory": 5, "cityPriority": 1 },
+      { "city": "Surabaya", "lat": -7.2575, "lng": 112.7521, "district": "Jawa Timur", "province": "Jawa Timur", "territory": 3, "cityPriority": 1 },
+      { "city": "Medan", "lat": 3.5952, "lng": 98.6722, "district": "Sumatera Utara", "province": "Sumatera Utara", "territory": 1, "cityPriority": 1 },
+      { "city": "Batam", "lat": 1.0456, "lng": 104.0305, "district": "Kepulauan Riau", "province": "Kepulauan Riau", "territory": 5, "cityPriority": 1 },
+      { "city": "Palembang", "lat": -2.9909, "lng": 104.7566, "district": "Sumatera Selatan", "province": "Sumatera Selatan", "territory": 1, "cityPriority": 2 }
+    ]
+  },
+  {
+    "name": "XL Satu",
+    "color": "amber-200",
+    "percentage": "",
+    "locations": [
+      { "city": "Makassar", "lat": -5.1477, "lng": 119.4327, "district": "Sulawesi", "province": "Sulawesi Selatan", "territory": 7, "cityPriority": 1 },
+      { "city": "Gorontalo", "lat": 0.5375, "lng": 123.0636, "district": "Sulawesi", "province": "Gorontalo", "territory": 7, "cityPriority": 2 },
+      { "city": "Palu", "lat": -0.8917, "lng": 119.8707, "district": "Sulawesi", "province": "Sulawesi Tengah", "territory": 7, "cityPriority": 2 },
+      { "city": "Kendari", "lat": -3.9765, "lng": 122.5155, "district": "Sulawesi", "province": "Sulawesi Tenggara", "territory": 7, "cityPriority": 2 },
+      { "city": "Manado", "lat": 1.4748, "lng": 124.8421, "district": "Sulawesi", "province": "Sulawesi Utara", "territory": 7, "cityPriority": 2 },
+      { "city": "Parepare", "lat": -3.0094, "lng": 120.1986, "district": "Sulawesi", "province": "Sulawesi Selatan", "territory": 7, "cityPriority": 2 },
+      { "city": "Sidenreng Rappang", "lat": -4.0166, "lng": 119.6256, "district": "Sulawesi", "province": "Sulawesi Selatan", "territory": 7, "cityPriority": 2 }
+    ]
+  }
+]

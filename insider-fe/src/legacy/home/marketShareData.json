@@ -1,0 +1,47 @@
+[
+    {
+        "value": 54.2,
+        "name": "IndiHome",
+        "itemStyle": { "color": "#FCA5A5" } 
+    },
+    {
+        "value": 3.2,
+        "name": "First Media",
+        "itemStyle": { "color": "#FED7AA" }
+    },
+    {
+        "value": 2.9,
+        "name": "MyRepublic",
+        "itemStyle": { "color": "#D4D4D8" } 
+    },
+    {
+        "value": 2.7,
+        "name": "ICONNET",
+        "itemStyle": { "color": "#A7F3D0" } 
+    },  
+    {
+        "value": 2.5,
+        "name": "Vision",
+        "itemStyle": { "color": "#F59E0B" } 
+    },  
+    {
+        "value": 2.3,
+        "name": "Biznet Home",
+        "itemStyle": { "color": "#C4B5FD" } 
+    },  
+    {
+        "value": 1.5,
+        "name": "CBN Fiber",
+        "itemStyle": { "color": "#F0ABFC" } 
+    },  
+    {
+        "value": 1.5,
+        "name": "XL Home",
+        "itemStyle": { "color": "#FDE68A" } 
+    },  
+    {
+        "value": 29,
+        "name": "Others",
+        "itemStyle": { "color": "#93C5FD" } 
+    }
+]

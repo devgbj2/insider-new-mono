@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+  url      = env("DATABASE_URL")
+
+}
+
+model User {
+  id        Int           @id @default(autoincrement())
+  username  String        @unique
+  password  String
+  email     String?
+  nik       String?
+  createdAt DateTime      @default(now())
+  role      String        
+  rowstatus Boolean       @default(true)
+  updatedAt DateTime?     @updatedAt
+  logs      ActivityLog[]
+}
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  details   String?
+  createdAt DateTime @default(now())
+  ip        String
+  level     String
+  message   String
+  meta      Json?
+  user      User?     @relation(fields: [userId], references: [id])
+}
+
+model InternetServiceProvider {
+  id                   Int       @id @default(autoincrement())
+  legalName            String?
+  name                 String    @unique
+  bpNumber             String?
+  asnNumber            String?
+  caNumber             String?
+  tifBpNumber          String?
+  isKominfo            Boolean?
+  isAsn                Boolean?
+  isCustomer           Boolean?
+  isJartup             Boolean?
+  isJartaplok          Boolean?
+  internalRiskProfile  String?
+  collectionRate       String?
+  customerCoverage     String?
+  headquarter          String?
+  province             String?
+  coverageList         String?
+  address              String?
+  createdAt            DateTime? @default(now())
+  updatedAt            DateTime? @updatedAt
+  provinceSyn          String?
+  coverageListProvince String?
+  latitude             Decimal?  @db.Decimal(9, 6)
+  longitude            Decimal?  @db.Decimal(9, 6)
+  quality              String?
+  size                 String?
+  risk                 String?
+  scale                String?
+  phone                String?   @db.VarChar(50)
+}
+
+model WhitelistLdap {
+  id        Int      @id @default(autoincrement())
+  nik       String   @unique
+  rowstatus Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PbiLink {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  link      String
+  rowstatus Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
