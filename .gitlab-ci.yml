@@ -91,12 +91,12 @@ deploy-job:
   script:
     # 1. Update image & tunggu rollout selesai
     - echo "Deploying image $CONTAINER_RELEASE_IMAGE..."
-    - oc set image dc/$OPENSHIFT_NAME_PRD container=$CONTAINER_RELEASE_IMAGE --record
-    - oc rollout status dc/$OPENSHIFT_NAME_PRD --watch=true --timeout=5m
+    - oc set image deployment/$OPENSHIFT_NAME_PRD container=$CONTAINER_RELEASE_IMAGE
+    - oc rollout status deployment/$OPENSHIFT_NAME_PRD --watch=true --timeout=5m
 
     # 2. Ambil nama pod yang running
-    - POD=$(oc get pod -l deploymentconfig=$OPENSHIFT_NAME_PRD --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+    - POD=$(oc get pod -l app=$OPENSHIFT_NAME_PRD --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
     - echo "Running migration di pod $POD..."
 
-    # 3. Jalankan migrasi dari dalam pod (sudah bisa akses DB)
+    # 3. Jalankan migrasi dari dalam pod
     - oc exec $POD -- npx prisma migrate deploy
