@@ -1,5 +1,6 @@
 stages:
   - build
+  - docker
   - migrate
   - deploy
 
@@ -13,18 +14,53 @@ variables:
   CONTAINER_IMAGE: $HARBOR_URL/$HARBOR_PATH/$CI_PROJECT_NAME
 
 # ==========================================
-# BUILD & PUSH IMAGE
+# BUILD FRONTEND + BACKEND
 # ==========================================
-build-job:
+build-app:
   stage: build
-  image: docker:24.0.5
-  services:
-    - docker:24.0.5-dind
-  tags:
-    - docker
+  image: node:20
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   script:
+    # ===== FRONTEND BUILD =====
+    - echo "Build React..."
+    - cd insider-fe
+    - npm ci
+    - npm run build
+
+    # ===== COPY TO NEST =====
+    - echo "Copy build React ke Nest..."
+    - mkdir -p ../insider-nest/public
+    - cp -r dist/* ../insider-nest/public
+
+    # ===== BACKEND BUILD =====
+    - cd ../insider-nest
+    - npm ci
+    - npm run build
+
+    # ===== SAVE ARTIFACT =====
+    - cd ..
+    - tar -czf app.tar.gz insider-nest
+
+  artifacts:
+    paths:
+      - app.tar.gz
+
+# ==========================================
+# BUILD & PUSH DOCKER IMAGE
+# ==========================================
+docker-build:
+  stage: docker
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  needs:
+    - build-app
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - tar -xzf app.tar.gz
+
     - export VERSION_TAG=${CI_COMMIT_SHORT_SHA}
     - export CONTAINER_RELEASE_IMAGE=$CONTAINER_IMAGE:$VERSION_TAG
     - export CONTAINER_RELEASE_LATEST=$CONTAINER_IMAGE:latest
@@ -32,16 +68,16 @@ build-job:
     - echo "VERSION_TAG=$VERSION_TAG" >> build.env
     - echo "CONTAINER_RELEASE_IMAGE=$CONTAINER_RELEASE_IMAGE" >> build.env
 
-    # Secure login
+    # Login Harbor
     - echo "$HARBOR_PASS" | docker login $HARBOR_URL -u "$HARBOR_USER" --password-stdin
 
-    # Build image (BuildKit enabled)
+    # Build image
     - docker build -t $CONTAINER_RELEASE_IMAGE .
 
-    # Push versioned image
+    # Push
     - docker push $CONTAINER_RELEASE_IMAGE
 
-    # Tag & push latest
+    # Latest tag
     - docker tag $CONTAINER_RELEASE_IMAGE $CONTAINER_RELEASE_LATEST
     - docker push $CONTAINER_RELEASE_LATEST
 
@@ -50,19 +86,19 @@ build-job:
       dotenv: build.env
 
 # ==========================================
-# DATABASE MIGRATION (SAFE)
+# DATABASE MIGRATION
 # ==========================================
 migrate-job:
   stage: migrate
   image: $CONTAINER_RELEASE_IMAGE
   needs:
-    - job: build-job
-      artifacts: true
+    - docker-build
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   variables:
-    NPM_CONFIG_CACHE: /tmp/.npm
+    DATABASE_URL: postgresql://$DB_USER:$DB_PASS@10.212.1.212:5432/$DB_NAME
   script:
+    - echo "Running migration..."
     - npx prisma migrate deploy
 
 # ==========================================
@@ -71,18 +107,15 @@ migrate-job:
 deploy-job:
   stage: deploy
   image: openshift/origin-cli:latest
-  tags:
-    - docker
   needs:
-    - job: build-job
-      artifacts: true
-    - job: migrate-job
+    - docker-build
+    - migrate-job
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   before_script:
-    - oc login --server=$OPENSHIFT_SERVER -u $OPENSHIFT_USER -p $OPENSHIFT_PASS --insecure-skip-tls-verify
-    - oc project $OPENSHIFT_PROJECT
+    - oc login --server=$OPENSHIFT_SERVER_PRD -u $OPENSHIFT_USER_PRD -p $OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
+    - oc project $OPENSHIFT_PROJECT_PRD
   script:
-    - echo "Updating DeploymentConfig '$OPENSHIFT_NAME' to $CONTAINER_RELEASE_IMAGE"
-    - oc set image dc/$OPENSHIFT_NAME container=$CONTAINER_RELEASE_IMAGE --record
-    - oc rollout status dc/$OPENSHIFT_NAME --watch=true --timeout=5m
+    - echo "Deploying image $CONTAINER_RELEASE_IMAGE"
+    - oc set image dc/$OPENSHIFT_NAME_PRD container=$CONTAINER_RELEASE_IMAGE --record
+    - oc rollout status dc/$OPENSHIFT_NAME_PRD --watch=true --timeout=5m
