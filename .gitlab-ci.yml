@@ -3,7 +3,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: $HARBOR_URL/$HARBOR_PATH/insider-app
+  IMAGE_NAME: $HARBOR_URL/$HARBOR_PATH/insider-nest
 
 # =========================
 # BUILD (FE + BE)
@@ -54,17 +54,18 @@ deploy_prod:
     # push ke harbor
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
 
-    # install oc (karena image docker ga ada oc)
+    # install oc
     - apk add --no-cache curl
     - curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
     - tar -xvf oc.tar.gz
-    - mv oc /usr/local/bin/
+    - chmod +x oc
 
-    # login & deploy OKD PROD
-    - oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
-    - oc project $OPENSHIFT_PROJECT_PRD
+    # use ./oc everywhere (important!)
+    - ./oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
+    - ./oc project $OPENSHIFT_PROJECT_PRD
 
-    - oc set image deployment/insider-app insider-app=$IMAGE_NAME:$CI_COMMIT_SHA --record
+    # deploy
+    - ./oc set image deployment/insider-nest insider-nest=$IMAGE_NAME:$CI_COMMIT_SHA --record
 
   only:
     - main
