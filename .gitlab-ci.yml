@@ -48,25 +48,31 @@ deploy_prod:
   before_script:
     - docker login $HARBOR_URL -u $HARBOR_USER -p $HARBOR_PASS
   script:
-    # build image
-    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f insider-nest/Dockerfile .
+  # build image
+  - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f insider-nest/Dockerfile .
 
-    # push ke harbor
-    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+  # push ke harbor
+  - docker push $IMAGE_NAME:$CI_COMMIT_SHA
 
-    # install oc
-    - apk add --no-cache curl
-    - curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
-    - tar -xvf oc.tar.gz
-    - chmod +x oc
+  # install dependencies
+  - apk add --no-cache curl libc6-compat
 
-    # use ./oc everywhere (important!)
-    - ./oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
-    - ./oc project $OPENSHIFT_PROJECT_PRD
+  # install oc
+  - curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+  - tar -xvf oc.tar.gz
+  - chmod +x oc
 
-    # deploy
-    - ./oc set image deployment/insider-nest insider-nest=$IMAGE_NAME:$CI_COMMIT_SHA --record
+  # debug (optional but smart)
+  - ls -la oc
 
+  # login
+  - ./oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
+  - ./oc project $OPENSHIFT_PROJECT_PRD
+
+  # deploy
+  - ./oc set image deployment/insider-nest insider-nest=$IMAGE_NAME:$CI_COMMIT_SHA --record
+  - ./oc rollout status deployment/insider-nest
+  
   only:
     - main
     - tags
