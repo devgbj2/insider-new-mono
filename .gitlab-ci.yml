@@ -73,10 +73,12 @@ deploy_prod:
   - CONTAINER_NAME=$(./oc get deployment insider-nest -o jsonpath='{.spec.template.spec.containers[0].name}')
   - echo "Container $CONTAINER_NAME"
   - ./oc set image deployment/insider-nest $CONTAINER_NAME=$IMAGE_NAME:$CI_COMMIT_SHA --record  
-  - ./oc rollout status deployment/insider-nest
+
   - ./oc get pods
   - ./oc describe deployment insider-nest
   - ./oc describe pods
+
+  - ./oc rollout status deployment/insider-nest
 
   only:
     - main
