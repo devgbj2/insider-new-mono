@@ -22,8 +22,10 @@ RUN npm ci
 COPY insider-nest/ ./
 COPY --from=fe-builder /fe/dist ./public
 
-RUN npm run build
+# 🔥 TAMBAHKAN INI
+RUN npx prisma generate
 
+RUN npm run build
 # =========================
 # STAGE 3: Production
 # =========================

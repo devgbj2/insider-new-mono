@@ -49,25 +49,41 @@ docker-build:
   image: docker:24.0.5
   services:
     - docker:24.0.5-dind
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+
   needs:
     - build-app
+
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+
   script:
     - tar -xzf app.tar.gz
 
+    # Build proper image name
     - export VERSION_TAG=${CI_COMMIT_SHORT_SHA}
+    - export CONTAINER_IMAGE=$HARBOR_URL/$HARBOR_PATH/insider-nest
     - export CONTAINER_RELEASE_IMAGE=$CONTAINER_IMAGE:$VERSION_TAG
     - export CONTAINER_RELEASE_LATEST=$CONTAINER_IMAGE:latest
 
-    - echo "VERSION_TAG=$VERSION_TAG" >> build.env
-    - echo "CONTAINER_RELEASE_IMAGE=$CONTAINER_RELEASE_IMAGE" >> build.env
+    # Debug (don’t skip this until stable)
+    - echo "IMAGE $CONTAINER_RELEASE_IMAGE"
 
     - echo "$HARBOR_PASS" | docker login $HARBOR_URL -u "$HARBOR_USER" --password-stdin
 
+    # Build
     - docker build -t $CONTAINER_RELEASE_IMAGE ./insider-nest
+
+    # Verify image exists
+    - docker images
+
+    # Push version tag
     - docker push $CONTAINER_RELEASE_IMAGE
 
+    # Tag + push latest
     - docker tag $CONTAINER_RELEASE_IMAGE $CONTAINER_RELEASE_LATEST
     - docker push $CONTAINER_RELEASE_LATEST
 
