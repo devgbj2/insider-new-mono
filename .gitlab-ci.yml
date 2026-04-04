@@ -48,7 +48,7 @@ deploy_prod:
   before_script:
     - docker login $HARBOR_URL -u $HARBOR_USER -p $HARBOR_PASS
   script:
-    # define image name (THIS IS THE FIX)
+  # define image name (THIS IS THE FIX)
     - export IMAGE_NAME=$HARBOR_URL/$HARBOR_PATH/insider-nest
     - echo "Using image $IMAGE_NAME:$CI_COMMIT_SHA"
 
@@ -84,6 +84,6 @@ deploy_prod:
 
     - ./oc rollout status deployment/insider-nest
 
-    only:
-      - main
-      - tags
+  only:
+    - main
+    - tags
