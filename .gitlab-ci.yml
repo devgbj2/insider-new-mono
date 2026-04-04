@@ -48,38 +48,42 @@ deploy_prod:
   before_script:
     - docker login $HARBOR_URL -u $HARBOR_USER -p $HARBOR_PASS
   script:
-  # build image
-  - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f insider-nest/Dockerfile .
+    # define image name (THIS IS THE FIX)
+    - export IMAGE_NAME=$HARBOR_URL/$HARBOR_PATH/insider-nest
+    - echo "Using image $IMAGE_NAME:$CI_COMMIT_SHA"
 
-  # push ke harbor
-  - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    # build image
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f insider-nest/Dockerfile .
 
-  # install dependencies
-  - apk add --no-cache curl libc6-compat
+    # push ke harbor
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
 
-  # install oc
-  - curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
-  - tar -xvf oc.tar.gz
-  - chmod +x oc
+    # install dependencies
+    - apk add --no-cache curl libc6-compat
 
-  # debug (optional but smart)
-  - ls -la oc
+    # install oc
+    - curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+    - tar -xvf oc.tar.gz
+    - chmod +x oc
 
-  # login
-  - ./oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
-  - ./oc project $OPENSHIFT_PROJECT_PRD
+    # debug (optional but smart)
+    - ls -la oc
 
-  # deploy
-  - CONTAINER_NAME=$(./oc get deployment insider-nest -o jsonpath='{.spec.template.spec.containers[0].name}')
-  - echo "Container $CONTAINER_NAME"
-  - ./oc set image deployment/insider-nest $CONTAINER_NAME=$IMAGE_NAME:$CI_COMMIT_SHA --record  
+    # login
+    - ./oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
+    - ./oc project $OPENSHIFT_PROJECT_PRD
 
-  - ./oc get pods
-  - ./oc describe deployment insider-nest
-  - ./oc describe pods
+    # deploy
+    - CONTAINER_NAME=$(./oc get deployment insider-nest -o jsonpath='{.spec.template.spec.containers[0].name}')
+    - echo "Container $CONTAINER_NAME"
+    - ./oc set image deployment/insider-nest $CONTAINER_NAME=$IMAGE_NAME:$CI_COMMIT_SHA --record  
 
-  - ./oc rollout status deployment/insider-nest
+    - ./oc get pods
+    - ./oc describe deployment insider-nest
+    - ./oc describe pods
 
-  only:
-    - main
-    - tags
+    - ./oc rollout status deployment/insider-nest
+
+    only:
+      - main
+      - tags
