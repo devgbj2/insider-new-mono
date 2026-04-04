@@ -1,0 +1,97 @@
+name: Build & Deploy to OKD
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ==========================================
+  # BUILD & PUSH IMAGE KE GHCR
+  # ==========================================
+  build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login ke GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=short
+            type=raw,value=latest
+
+      - name: Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-to: type=inline
+
+  # ==========================================
+  # DEPLOY KE OKD
+  # ==========================================
+  deploy:
+    name: Deploy to OKD
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Install oc CLI
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: latest
+
+      - name: Login ke OKD
+        run: |
+          oc login ${{ secrets.OKD_SERVER }} \
+            -u ${{ secrets.OKD_USER }} \
+            -p ${{ secrets.OKD_PASS }} \
+            --insecure-skip-tls-verify
+
+          oc project ${{ secrets.OKD_PROJECT }}
+
+      - name: Deploy image baru
+        run: |
+          IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ needs.build.outputs.image_tag }}
+
+          oc set image deployment/${{ secrets.OKD_DEPLOYMENT_NAME }} \
+            container=$IMAGE
+
+          oc rollout status deployment/${{ secrets.OKD_DEPLOYMENT_NAME }} \
+            --watch=true --timeout=5m
+
+      - name: Run Prisma migrate
+        run: |
+          POD=$(oc get pod \
+            -l app=${{ secrets.OKD_DEPLOYMENT_NAME }} \
+            --field-selector=status.phase=Running \
+            -o jsonpath='{.items[0].metadata.name}')
+
+          echo "Migrating di pod: $POD"
+          oc exec $POD -- npx prisma migrate deploy
