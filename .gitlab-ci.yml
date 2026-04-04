@@ -1,118 +1,71 @@
 stages:
   - build
-  - docker
   - deploy
 
-# ==========================================
-# GLOBAL VARIABLES
-# ==========================================
 variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
-  DOCKER_BUILDKIT: 1
-  CONTAINER_IMAGE: $HARBOR_URL/$HARBOR_PATH/$CI_PROJECT_NAME
+  IMAGE_NAME: $HARBOR_URL/$HARBOR_PATH/insider-app
 
-# ==========================================
-# BUILD FRONTEND + BACKEND
-# ==========================================
-build-app:
+# =========================
+# BUILD (FE + BE)
+# =========================
+build_app:
   stage: build
   image: node:20
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
   script:
-    - echo "Build React..."
+    # ===== BUILD REACT =====
     - cd insider-fe
     - npm ci
     - npm run build
 
-    - echo "Copy build React ke Nest..."
-    - mkdir -p ../insider-nest/public
-    - cp -r dist/* ../insider-nest/public
-
+    # ===== BUILD NEST =====
     - cd ../insider-nest
     - npm ci
-    - npm run build
 
-    - cd ..
-    - tar -czf app.tar.gz insider-nest
+    # copy FE build ke Nest
+    - mkdir -p public
+    - cp -r ../insider-fe/build/* public/
+
+    # prisma generate
+    - npx prisma generate
+
+    # build nest
+    - npm run build
 
   artifacts:
     paths:
-      - app.tar.gz
+      - insider-nest
 
-# ==========================================
-# BUILD & PUSH DOCKER IMAGE
-# ==========================================
-docker-build:
-  stage: docker
-  image: docker:24.0.5
-  services:
-    - docker:24.0.5-dind
-
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-
-  needs:
-    - build-app
-
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-
-  script:
-    - tar -xzf app.tar.gz
-
-    # Build proper image name
-    - export VERSION_TAG=${CI_COMMIT_SHORT_SHA}
-    - export CONTAINER_IMAGE=$HARBOR_URL/$HARBOR_PATH/insider-nest
-    - export CONTAINER_RELEASE_IMAGE=$CONTAINER_IMAGE:$VERSION_TAG
-    - export CONTAINER_RELEASE_LATEST=$CONTAINER_IMAGE:latest
-
-    # Debug (don’t skip this until stable)
-    - echo "IMAGE $CONTAINER_RELEASE_IMAGE"
-
-    - echo "$HARBOR_PASS" | docker login $HARBOR_URL -u "$HARBOR_USER" --password-stdin
-
-    # Build
-    - docker build -t $CONTAINER_RELEASE_IMAGE ./insider-nest
-
-    # Verify image exists
-    - docker images
-
-    # Push version tag
-    - docker push $CONTAINER_RELEASE_IMAGE
-
-    # Tag + push latest
-    - docker tag $CONTAINER_RELEASE_IMAGE $CONTAINER_RELEASE_LATEST
-    - docker push $CONTAINER_RELEASE_LATEST
-
-  artifacts:
-    reports:
-      dotenv: build.env
-
-# ==========================================
-# DEPLOY + MIGRATE (dari dalam pod OKD)
-# ==========================================
-deploy-job:
+# =========================
+# DOCKER + HARBOR + OKD (PROD ONLY)
+# =========================
+deploy_prod:
   stage: deploy
-  image: openshift/origin-cli:latest
-  needs:
-    - docker-build
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
+  image: docker:24
+  services:
+    - docker:24-dind
+  dependencies:
+    - build_app
   before_script:
-    - oc login --server=$OPENSHIFT_SERVER_PRD -u $OPENSHIFT_USER_PRD -p $OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
-    - oc project $OPENSHIFT_PROJECT_PRD
+    - docker login $HARBOR_URL -u $HARBOR_USER -p $HARBOR_PASS
   script:
-    # 1. Update image & tunggu rollout selesai
-    - echo "Deploying image $CONTAINER_RELEASE_IMAGE..."
-    - oc set image deployment/$OPENSHIFT_NAME_PRD container=$CONTAINER_RELEASE_IMAGE
-    - oc rollout status deployment/$OPENSHIFT_NAME_PRD --watch=true --timeout=5m
+    # build image
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f insider-nest/Dockerfile .
 
-    # 2. Ambil nama pod yang running
-    - POD=$(oc get pod -l app=$OPENSHIFT_NAME_PRD --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
-    - echo "Running migration di pod $POD..."
+    # push ke harbor
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
 
-    # 3. Jalankan migrasi dari dalam pod
-    - oc exec $POD -- npx prisma migrate deploy
+    # install oc (karena image docker ga ada oc)
+    - apk add --no-cache curl
+    - curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+    - tar -xvf oc.tar.gz
+    - mv oc /usr/local/bin/
+
+    # login & deploy OKD PROD
+    - oc login $OPENSHIFT_SERVER_PRD --username=$OPENSHIFT_USER_PRD --password=$OPENSHIFT_PASS_PRD --insecure-skip-tls-verify
+    - oc project $OPENSHIFT_PROJECT_PRD
+
+    - oc set image deployment/insider-app insider-app=$IMAGE_NAME:$CI_COMMIT_SHA --record
+
+  only:
+    - main
+    - tags

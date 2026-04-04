@@ -1,30 +1,18 @@
-# =========================
-# PRODUCTION ONLY
-# =========================
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install production deps
-COPY package*.json ./
+COPY insider-nest/package*.json ./
 RUN npm ci
 
-# Prisma (tetap penting)
-COPY prisma ./prisma
+COPY insider-nest .
+
+# prisma generate
 RUN npx prisma generate
 
-# Copy hasil build dari CI
-COPY dist ./dist
-COPY public ./public
+# build nest
+RUN npm run build
 
-# Permission for OKD (lu udah bener)
-RUN chgrp -R 0 /app && chmod -R g+rwX /app
-
-ENV NODE_ENV=production
-ENV PORT=8080
-
-EXPOSE 8080
-
-USER 1001
+EXPOSE 3000
 
 CMD ["node", "dist/main.js"]
