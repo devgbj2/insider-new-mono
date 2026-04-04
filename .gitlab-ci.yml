@@ -23,7 +23,7 @@ build_app:
 
     # copy FE build ke Nest
     - mkdir -p public
-    - cp -r ../insider-fe/build/* public/
+    - cp -r ../insider-fe/dist/* public/
 
     # prisma generate
     - npx prisma generate
