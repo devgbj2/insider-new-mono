@@ -48,16 +48,25 @@ deploy_prod:
   before_script:
     - docker login $HARBOR_URL -u $HARBOR_USER -p $HARBOR_PASS
   script:
-  # define image name (THIS IS THE FIX)
+    # define image name
     - export IMAGE_NAME=$HARBOR_URL/$HARBOR_PATH/insider-nest
-    - echo "Using image $IMAGE_NAME:$CI_COMMIT_SHA"
+    - export IMAGE_TAG=$CI_COMMIT_SHA
 
-    # build image
-    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -f insider-nest/Dockerfile .
+    - echo "Using image $IMAGE_NAME"
+    - echo "Tag $IMAGE_TAG"
 
-    # push ke harbor
-    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    # build with TWO tags (important)
+    - docker build \
+        -t $IMAGE_NAME:$IMAGE_TAG \
+        -t $IMAGE_NAME:latest \
+        -f insider-nest/Dockerfile .
 
+    # verify locally (debug)
+    - docker images | grep insider-nest || true
+
+    # push BOTH tags
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:latest
     # install dependencies
     - apk add --no-cache curl libc6-compat
 
