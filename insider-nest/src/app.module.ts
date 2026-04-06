@@ -30,7 +30,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     LogModule,
     PbiLinkModule,
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), '..', 'public'),
+      rootPath: join(__dirname, '..', 'public'),
       exclude: ['/api/{*path}'],  // ✅ format baru
     }),
 
