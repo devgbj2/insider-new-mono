@@ -7,6 +7,9 @@ RUN npm ci
 
 COPY insider-nest .
 
+# 👉 TAMBAH INI (fix permission)
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+
 # prisma generate
 RUN npx prisma generate
 
