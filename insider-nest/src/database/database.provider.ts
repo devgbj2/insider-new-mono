@@ -5,11 +5,9 @@ export const DatabaseProvider: Provider = {
     provide: 'DB',
     useFactory: async () => {
         const pool = new Pool({
-            host: 'localhost',
-            port: 5432,
-            user: 'postgres',
-            password: 'admin123',
-            database: 'insider-nest',
+            connectionString: process.env.DATABASE_URL,
+            // Jika database luar Anda mewajibkan SSL (sering terjadi di cloud/korporat):
+            // ssl: { rejectUnauthorized: false } 
         });
 
         // test connection
