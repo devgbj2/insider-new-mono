@@ -27,7 +27,7 @@ export class IspService {
         const skip = (page - 1) * limit;
 
         // Bangun where clause secara type-safe
-        const where: Prisma.InternetServiceProviderWhereInput = {
+        const where = {
             ...(name && {
                 name: { contains: name, mode: 'insensitive' },
             }),
