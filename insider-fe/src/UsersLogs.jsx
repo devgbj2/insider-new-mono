@@ -54,7 +54,7 @@ export default function UsersLogs() {
           <TableHeader>
             <TableRow>
               <TableHead>No.</TableHead>
-              <TableHead>User ID</TableHead>
+              <TableHead>Username/NIK</TableHead>
               <TableHead>Message</TableHead>
               <TableHead>Details</TableHead>
               <TableHead>IP Address</TableHead>

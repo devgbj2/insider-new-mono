@@ -72,7 +72,7 @@ export class QueryIspDto {
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   @IsArray()
   @IsIn(ISP_AREA, { each: true })
-  area: string[];
+  area?: string[];
 
   @IsOptional()
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))

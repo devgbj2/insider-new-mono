@@ -55,6 +55,14 @@ export class IspService {
         return PaginatedResponseDto.of(data, total, page, limit);
     }
 
+    async exportAll(): Promise<any> {
+        const data = await this.prisma.internetServiceProvider.findMany({
+            orderBy: { id: 'asc' },
+        })
+
+        return data;
+    }
+
     async create(dto: CreateIspDto) {
         const user = await this.prisma.internetServiceProvider.create({
             data: dto

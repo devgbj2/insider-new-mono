@@ -20,6 +20,12 @@ import { Badge } from "@/components/ui/badge"
 import { date, exportIspPdf, exportIspsExcel } from "./lib/common"
 
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+import {
   Table,
   TableHeader,
   TableHead,
@@ -41,6 +47,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ISP_FILTER_OPTIONS, PAGE_SIZES } from "./constants/isp"
 import { useIspList } from "./hooks/useIspList"
 
+import { api } from "./lib/common"
+import toast from "react-hot-toast"
+
 
 export default function ListIsp() {
   const {
@@ -59,9 +68,20 @@ export default function ListIsp() {
     setExpandedRow(prev => (prev === id ? null : id))
   }
 
+  const exportAll = async () => {
+    try {
+      const { data } = await api.get(`isp/export`)
+
+      exportIspsExcel(whiteListColumns, data)
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+
+    }
+  }
+
   useEffect(() => {
     setExpandedRow(null);
-    console.log(isps)
   }, [isps]);
 
   return (
@@ -85,9 +105,34 @@ export default function ListIsp() {
             </SelectContent>
           </Select>
 
-          <Button variant="outline" onClick={() => exportIspsExcel(whiteListColumns, isps)}>
-            <Download className="mr-2 h-4 w-4" /> Export
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent className="w-40 p-2">
+              <div className="flex flex-col gap-1">
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={() => exportAll()}
+                >
+                  Export All
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={() => exportIspsExcel(whiteListColumns, isps)}
+                >
+                  Export Selected
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
 
           <Button variant="outline" onClick={() => setShowFilter(true)}>
             <Funnel className="mr-2 h-4 w-4" />

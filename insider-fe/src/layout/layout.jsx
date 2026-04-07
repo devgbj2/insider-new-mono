@@ -16,14 +16,17 @@ export default function Layout() {
       <SidebarInset>
 
         <AppBreadcrumb />
+        
+        <div className="bg-gray-100/50">
 
-        <main className="p-6 min-h-[88vh]">
-          <Outlet />
-        </main>
+          <main className="p-6 min-h-[88vh]">
+            <Outlet />
+          </main>
 
-        <footer className="text-center text-xs mb-4">
-          <p>&copy; 2025 PT TIF Hak Cipta dilindungi undang-undang</p>
-        </footer>
+          <footer className="text-center text-xs mb-4">
+            <p>&copy; 2025 PT TIF Hak Cipta dilindungi undang-undang</p>
+          </footer>
+        </div>
 
       </SidebarInset>
 

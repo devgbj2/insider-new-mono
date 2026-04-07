@@ -17,6 +17,15 @@ export class IspController {
         return this.ispService.findAll(query);
     }
 
+    @Get('export')
+    async exportAll() {
+        const result = await this.ispService.exportAll();
+        return {
+            success: true,
+            data: result
+        }
+    }
+
     @Get(':id')
     async findbyId(@Param('id') id: number) {
         const result = await this.ispService.findById(id);
